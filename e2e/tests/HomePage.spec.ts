@@ -14,9 +14,9 @@ describe('home view', () => {
         homePagePO.Url;
     });
 
-    it('title should be Languages', () => {
+    it('title should be Knockout TypeScript Live Search Sample', () => {
         homePagePO.Title.then((title: string) => {
-            expect(title).to.equal('Languages');
+            expect(title).to.equal('Knockout TypeScript Live Search Sample');
         });
     });
 
