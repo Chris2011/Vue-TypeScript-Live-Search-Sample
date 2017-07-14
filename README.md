@@ -12,7 +12,9 @@ npm i
 ## Usage
 The sample uses npm scripts, right inside the package.json
 
-* Start the webserver (For livereload you have to call http://localhost:9000/generated/)
+* Start the webserver which builds the app, watches for file changes and does a livereload.
+The URL is http://localhost:9000/generated/, The server creates a temp folder for the built app
+to deliver it to the client (Maybe in memory, I don't know).
 ```
 npm run serve
 ```
@@ -46,6 +48,6 @@ npm run gen-sprite
 So basically thats all you have to do to start coding!
 
 ## Known problems
-* While using the liveserver for livecoding, atm there is no script to generate the css file from the svg sprite
+While using the liveserver for livecoding, atm there is no script to generate the css file from the svg sprite
 with all the classes inside of it to use. Atm it is only possible to see the result with icons in the UI after call
 `npm run build-dev` and call the index.html file from 'dist' in your browser.
