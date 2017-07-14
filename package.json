@@ -1,5 +1,5 @@
 {
-  "name": "NbScratchFileWindow",
+  "name": "Knockout TypeScript Live Search Sample",
   "version": "1.0.0",
   "keywords": [
     "util",
@@ -37,7 +37,7 @@
   "scripts": {
     "build-dev": "npm run test && npm run gen-sprite && webpack",
     "build-prod": "npm run build-dev --optimize-minimize",
-    "gen-sprite": "svg-sprite --css --css-render-css --css-example --shape-dim-height='16px' --dest=dist app/icons/*.svg",
+    "gen-sprite": "svg-sprite --css --css-render-css --css-example --dest=dist app/icons/*.svg",
     "pree2e": "webdriver-manager update",
     "e2e": "protractor",
     "serve": "webpack-dev-server",
