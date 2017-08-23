@@ -83,9 +83,9 @@ export class LanguageTypesDOMModel {
                 this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
                 this.selectedElem.classList.toggle('selected');
-                this.languageTypeList.scrollTop = 400;
+                this.languageTypeList.scrollTop = 800;
             } else {
-                if(this.selectedElem.offsetTop < 520) {
+                if(this.selectedElem.offsetTop < 450) {
                     this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) / this.selectedElem.offsetHeight);
                 }
 
@@ -101,13 +101,13 @@ export class LanguageTypesDOMModel {
             this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
             this.selectedElem.classList.toggle('selected');
-            this.languageTypeList.scrollTop = 600;
+            this.languageTypeList.scrollTop = 800;
         }
     }
 
     public moveDown(): void {
         if(this.selectedElem) {
-            if(this.selectedElem.offsetTop > 600) {
+            if(this.selectedElem.offsetTop > 400) {
                 this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) * this.selectedElem.offsetHeight);
             }
 
