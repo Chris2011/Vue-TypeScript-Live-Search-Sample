@@ -1,32 +1,36 @@
 body {
     margin: 0;
+    border: 1px solid rgba(0, 0, 0, .5);
+    font-family: Arial;
 
-    input {
-        padding-left: 10px;
-        border: 1px solid #c8ccd0;
-        border-radius: 2px;
-        box-sizing: border-box;
-        box-shadow: inset 0 0 1px rgba(145, 153, 161, 0.2), 0 0 0 rgba(255, 255, 255, 0);
-        width: 100%;
-        color: #6a737c;
-        font-size: 16px;
-        outline: none;
-        height: 36px;
+    .wrapper {
+        padding: 10px;
+
+        input {
+            padding-left: 8px;
+            border: 1px solid #c8ccd0;
+            border-radius: 2px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 1px rgba(145, 153, 161, 0.2), 0 0 0 rgba(255, 255, 255, 0);
+            width: 100%;
+            color: #6a737c;
+            font-size: 16px;
+            outline: none;
+            height: 32px;
+        }
     }
 
     ul {
         list-style: none;
         margin: .5em 0 0 0;
-        font-family: Arial;
         color: darkslategrey;
         padding: 0;
         overflow-y: scroll;
-        height: 600px;
+        height: 385px;
 
         li {
             padding: .25em 0 0 .75em;
-            transition: background-color 100ms ease,
-                color 100ms ease;
+            transition: background-color 100ms ease, color 100ms ease;
             display: flex;
             align-items: center;
 
@@ -34,8 +38,6 @@ body {
                 width: 16px;
                 height: 16px;
                 margin-right: .5em;
-                /*                    zoom: .5;
-                                    transform: scale(1);*/
             }
 
             .file-ext {

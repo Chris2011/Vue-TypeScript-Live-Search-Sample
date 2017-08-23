@@ -9,7 +9,9 @@
         <link href="sprite.css" rel="stylesheet" />
     </head>
     <body>
-        <input id="languageSearch" data-bind="value: language, valueUpdate: 'keyup', hasFocus: true" type="text" placeholder="Search available languages..." />
+        <div class="wrapper">
+            <input id="languageSearch" data-bind="value: language, valueUpdate: 'keyup', hasFocus: true" type="text" placeholder="Search available languages..." />
+        </div>
 
         <ul id="languageTypes" data-bind="foreach: languageTypes">
             <li data-bind="click: setExt">

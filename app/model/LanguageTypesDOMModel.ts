@@ -83,7 +83,7 @@ export class LanguageTypesDOMModel {
                 this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
                 this.selectedElem.classList.toggle('selected');
-                this.languageTypeList.scrollTop = 600;
+                this.languageTypeList.scrollTop = 400;
             } else {
                 if(this.selectedElem.offsetTop < 520) {
                     this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) / this.selectedElem.offsetHeight);
