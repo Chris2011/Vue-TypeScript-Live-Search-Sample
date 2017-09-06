@@ -73,5 +73,6 @@ export class App {
 
         this.languageTypesListModel.init();
         this.languageTypesListModel.handleItemSelectionWithArrowKeys();
+        this.languageTypesListModel.selectFirstElem();
     }
 }

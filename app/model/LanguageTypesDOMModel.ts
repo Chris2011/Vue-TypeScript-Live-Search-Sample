@@ -1,6 +1,7 @@
 enum KeyCode {
-    Down = 40,
-    Up = 38
+    Enter = 13,
+    Up = 38,
+    Down = 40
 }
 
 export class LanguageTypesDOMModel {
@@ -10,6 +11,7 @@ export class LanguageTypesDOMModel {
     private lastListElem: HTMLLIElement = null;
     private selectedElem: HTMLLIElement = null;
     private textOfSelectedLiElem: Node = null;
+    private inputField: HTMLInputElement = null;
 
     private getIndexOfElem(selectedElem: HTMLLIElement): number {
         return [].findIndex.call(this.languageTypeListItems, (elem: HTMLLIElement) => {
@@ -22,6 +24,7 @@ export class LanguageTypesDOMModel {
         this.languageTypeListItems = document.querySelectorAll('#languageTypes li') as NodeListOf<HTMLLIElement>;
         this.firstListElem = document.querySelector('#languageTypes > li') as HTMLLIElement;
         this.lastListElem = document.querySelector('#languageTypes > li:last-child') as HTMLLIElement;
+        this.inputField = document.querySelector('input') as HTMLInputElement;
 
         // TODO: Remove handler of each elem, befor setting again.
         [].forEach.call(this.languageTypeListItems, (item: HTMLLIElement) => {
@@ -37,7 +40,7 @@ export class LanguageTypesDOMModel {
                 // TODO: Test the click handler event.
                 console.log("clicked");
 
-                document.querySelector('input').focus();
+                this.inputField.focus();
             });
         });
     }
@@ -147,6 +150,24 @@ export class LanguageTypesDOMModel {
                 evt.preventDefault();
 
                 this.moveDown();
+            }
+        });
+    }
+
+    public selectFirstElem(): void {
+        this.inputField.addEventListener('keyup', e => {
+            if(e.keyCode !== KeyCode.Down && e.keyCode !== KeyCode.Up) {
+                this.selectedElem = document.querySelector('.selected') as HTMLLIElement;
+
+                if(this.selectedElem) {
+                    this.selectedElem.classList.remove('selected');
+                }
+
+                if(!!this.inputField.value) {
+                    this.firstListElem && this.firstListElem.classList.add('selected');
+                } else {
+                    this.firstListElem && this.firstListElem.classList.remove('selected');
+                }
             }
         });
     }

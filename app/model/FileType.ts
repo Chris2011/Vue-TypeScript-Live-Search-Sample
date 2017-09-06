@@ -40,4 +40,8 @@ export class FileType {
     public get Language(): KnockoutObservable<String> {
         return this.language;
     }
+
+    public get LanguageTypes(): KnockoutObservable<Array<LanguageType>> {
+        return this.languageTypes;
+    }
 }
