@@ -12,7 +12,7 @@ module.exports = {
     },
     resolve: {
         // Add '.ts' as a resolvable extension.
-        extensions: [".ts"]
+        extensions: ['.ts', '.js']
     },
     module: {
         rules: [{
