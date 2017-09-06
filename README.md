@@ -39,11 +39,20 @@ npm run test
 npm run e2e
 ```
 
-* Generate SVG sprite from SVG icons folder (app/icons)
+* Fast build, to test new stuff fast and simple
 ```
-npm run gen-sprite
+npm run fast-build-dev
 ```
 
+* Analyze package sizes
+```
+npm run analyze-package
+```
+
+* Generate SVG to PNG
+```
+npm run svg2png
+```
 
 So basically thats all you have to do to start coding!
 
