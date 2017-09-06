@@ -47,6 +47,7 @@
     "build-prod-old": "npm run test && npm run gen-sprite && webpack --optimize-minimize",
     "gen-sprite-old": "svg-sprite --css --css-render-css --css-example --dest=dist app/icons/*.svg",
     "build-dev": "npm run test && npm run svg2png && webpack",
+    "fast-build-dev": "webpack",
     "build-prod": "npm run test && npm run svg2png && webpack --optimize-minimize",
     "svg2png": "svg2png-many -i ./app/icons -o ./dist/icons -w 16 -h 16 && node ./build/gen-sprite.js",
     "analyze-package": "source-map-explorer ./dist/app.js ./dist/app.js.map",
