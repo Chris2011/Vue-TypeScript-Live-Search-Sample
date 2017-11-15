@@ -1,5 +1,5 @@
-# Knockout TypeScript Live Search Sample
-This project sample uses TypeScript 2.*, Knockout, Webpack 3.*, Mocha (+Chai assertion lib), Protractor (with Mocha) and Scss.
+# Vue TypeScript Live Search Sample
+This project sample uses TypeScript 2.*, Vue 2.5, Webpack 3.*, Mocha (+Chai assertion lib), Protractor (with Mocha) and Scss.
 There is no need to install stuff globally, everything works right inside the sample folder.
 
 
