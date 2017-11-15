@@ -10,7 +10,6 @@ export class LanguageTypesDOMModel {
     private firstListElem: HTMLLIElement = null;
     private lastListElem: HTMLLIElement = null;
     private selectedElem: HTMLLIElement = null;
-    private textOfSelectedLiElem: Node = null;
     private inputField: HTMLInputElement = null;
 
     private getIndexOfElem(selectedElem: HTMLLIElement): number {
@@ -83,7 +82,6 @@ export class LanguageTypesDOMModel {
                 this.selectedElem.classList.remove('selected');
 
                 this.selectedElem = this.lastListElem;
-                this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
                 this.selectedElem.classList.toggle('selected');
                 this.languageTypeList.scrollTop = 800;
@@ -95,13 +93,11 @@ export class LanguageTypesDOMModel {
                 this.selectedElem.classList.remove('selected');
 
                 this.selectedElem = this.PreviousElement;
-                this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
                 this.selectedElem.classList.toggle('selected');
             }
         } else {
             this.selectedElem = this.LastListElem;
-            this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
             this.selectedElem.classList.toggle('selected');
             this.languageTypeList.scrollTop = 800;
@@ -118,7 +114,6 @@ export class LanguageTypesDOMModel {
                 this.selectedElem.classList.remove('selected');
 
                 this.selectedElem = this.FirstListElem;
-                this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
                 this.selectedElem.classList.toggle('selected');
                 this.languageTypeList.scrollTop = 0;
@@ -126,13 +121,11 @@ export class LanguageTypesDOMModel {
                 this.selectedElem.classList.remove('selected');
 
                 this.selectedElem = this.NextElement;
-                this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
                 this.selectedElem.classList.toggle('selected');
             }
         } else {
             this.selectedElem = this.FirstListElem;
-            this.textOfSelectedLiElem = this.selectedElem.lastChild;
 
             this.selectedElem.classList.toggle('selected');
         }

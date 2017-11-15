@@ -31,6 +31,10 @@ export class LanguageType {
         return this.fileExt.toLowerCase();
     }
 
+    public get IsPluginRequired(): boolean {
+        return this.isPluginRequired;
+    }
+
     public setExt(languageType: LanguageType): void {
         console.log(`Chosen extension - ${languageType.FileExt}`);
     }
