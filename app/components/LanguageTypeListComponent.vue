@@ -19,8 +19,14 @@
 
     @Component
     export default class LanguageTypeListComponent extends Vue {
-            @Prop()
-            LanguageTypes: Array<string>;
+        @Prop()
+        LanguageTypes: Array<string>;
+
+        constructor() {
+            super();
+
+            this.LanguageTypes = ["Test", "123"];
+        }
     }
 </script>
 
