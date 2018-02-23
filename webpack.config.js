@@ -11,36 +11,41 @@ module.exports = {
     },
     module: {
         rules: [{
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-                        // the "scss" and "sass" values for the lang attribute to the right configs here.
-                        // other preprocessors should work out of the box, no loader config like this necessary.
-                        'scss': 'vue-style-loader!css-loader!sass-loader',
-                        'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
-                        ts: 'babel-loader!ts-loader'
-                    }
-                    // other vue-loader options go here
-                }
+            // all files with a '.ts' and '.vue' extension will be handled by
+            // 'ts-loader' and after that with babel-loader
+            // to transpile from ES2015 to ES5
+            test: /\.ts$/,
+            use: [{
+                loader: 'babel-loader'
             }, {
-                // all files with a '.ts' extension will be handled by 'ts-loader'
-                test: /\.ts$/,
                 loader: 'ts-loader',
                 options: {
                     appendTsSuffixTo: [/\.vue$/]
                 }
-            }, {
-                // https://github.com/kisenka/svg-sprite-loader
-                test: /\.svg$/,
-                loader: 'svg-sprite-loader',
-                options: {
-                    extract: true,
-                    dest: 'dist',
-                    spriteFilename: 'sprite.svg'
-                }
             }]
+        }, {
+            test: /\.vue$/,
+            loader: 'vue-loader',
+            options: {
+                loaders: {
+                    // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
+                    // the "scss" and "sass" values for the lang attribute to the right configs here.
+                    // other preprocessors should work out of the box, no loader config like this necessary.
+                    'scss': 'vue-style-loader!css-loader!sass-loader',
+                    ts: 'babel-loader!ts-loader'
+                }
+            // other vue-loader options go here
+            }
+        }, {
+            // https://github.com/kisenka/svg-sprite-loader
+            test: /\.svg$/,
+            loader: 'svg-sprite-loader',
+            options: {
+                extract: true,
+                dest: 'dist',
+                spriteFilename: 'sprite.svg'
+            }
+        }]
     },
     resolve: {
         // Add '.ts' as a resolvable extension.
