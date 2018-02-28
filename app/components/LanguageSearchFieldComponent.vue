@@ -6,9 +6,18 @@
 
 <script lang="ts">
     import Vue from 'vue';
-//    import {FileType} from '../model/FileType';
+    import {Component, Prop} from 'vue-property-decorator';
+//    import FileType from './model/FileType';
 
+    // The @Component decorator indicates the class is a Vue component
+    @Component
     export default class LanguageSerchFieldComponent extends Vue {
+        @Prop()
+        public Language: string;
+
+        constructor() {
+            super();
+        }
     }
 </script>
 

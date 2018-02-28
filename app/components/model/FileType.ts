@@ -1,4 +1,4 @@
-import Vue from 'vue';
+//import Vue from 'vue';
 import {LanguageType} from './LanguageType';
 
 /**
@@ -6,22 +6,22 @@ import {LanguageType} from './LanguageType';
  * @author Chris
  */
 export class FileType {
-    private language: Vue;
+    private language: LanguageType;
     private languageTypes: Array<LanguageType>;
 
     constructor(languageTypes: Array<LanguageType>) {
         this.languageTypes = languageTypes;
     }
 
-    public bindViewModel(): Vue {
-        return new Vue({
-            el: '.wrapper',
-            data: {
-                language: this.language,
-                languageTypes: this.languageTypes
-            }
-        });
-    }
+    //    public bindViewModel(): Vue {
+    //        return new Vue({
+    //            el: '.wrapper',
+    //            data: {
+    //                language: this.language,
+    //                languageTypes: this.languageTypes
+    //            }
+    //        });
+    //    }
 
     //        this.languageTypes = () => {
     //            var searchTerm = this.language.toLowerCase();
@@ -49,10 +49,10 @@ export class FileType {
     //        return term ? languageName.replace(term, `<strong>${term}</strong>`) : languageName
     //    }
 
-    //    public get Language(): Vue {
-    //    return this.language;
-    //}
-    //
+    public get Language(): LanguageType {
+        return this.language;
+    }
+
     public get LanguageTypes(): Array<LanguageType> {
         return this.languageTypes;
     }

@@ -8,7 +8,7 @@ export class LanguageType {
     private fileExt: string;
     private isPluginRequired: boolean;
 
-    constructor(languageName: string, fileExt: string, isPluginRequired: boolean) {
+    constructor(languageName: string, fileExt: string, isPluginRequired: boolean = false) {
         this.icon = fileExt || languageName;
         this.languageName = languageName;
         this.fileExt = fileExt || languageName;

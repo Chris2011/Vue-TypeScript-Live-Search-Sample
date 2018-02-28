@@ -1,11 +1,11 @@
 <template>
     <div>
-        <div>Test</div>
-        <ul id="languageTypes" v-bind="LanguageTypes">
-            <li v-on:click="setExt">
-                <div class="icon" v-bind:class="`svg-${Icon}`"></div>
-                <div v-bind="LanguageName"></div>
-                <div class="file-ext" v-bind="FileExt && `(.${FileExt})`"></div>
+        <ul id="languageTypes" v-for="languageType in LanguageTypes">
+            <!--<li v-on:click="setExt">-->
+            <li>
+                <div class="icon" v-bind:class="`svg-${languageType.Icon}`"></div>
+                <div>{{languageType.LanguageName}}</div>
+                <div class="file-ext">{{languageType.FileExt && `(.${languageType.FileExt})`}}</div>
             </li>
         </ul>
     </div>
@@ -15,17 +15,23 @@
     import Vue from 'vue';
     import {Component, Prop} from 'vue-property-decorator';
 
-//    import FileType from './model/FileType';
+    import {FileType} from './model/FileType';
+    import {LanguageType} from './model/LanguageType';
 
     @Component
     export default class LanguageTypeListComponent extends Vue {
         @Prop()
-        LanguageTypes: Array<string>;
+        public LanguageTypes: Array<{LanguageName: string}>;
 
         constructor() {
             super();
+            
+            const fileType = new FileType([
+                new LanguageType('JavaScript', 'js'),
+                new LanguageType('Java', 'java')
+            ]);
 
-            this.LanguageTypes = ["Test", "123"];
+            this.LanguageTypes = fileType.LanguageTypes;
         }
     }
 </script>
