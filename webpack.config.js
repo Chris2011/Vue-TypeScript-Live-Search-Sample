@@ -3,7 +3,7 @@ SpriteLoaderPlugin = require('svg-sprite-loader/plugin'),
 path = require('path');
 
 module.exports = {
-    entry: './app/app.ts',
+    entry: './app/main.ts',
     output: {
         path: path.resolve(__dirname, './dist'),
         publicPath: '/generated/',
