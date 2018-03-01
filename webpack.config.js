@@ -11,6 +11,9 @@ module.exports = {
     },
     module: {
         rules: [{
+                test: /\.scss$/,
+                loader: ['style-loader', 'css-loader', 'sass-loader']
+            }, {
             // all files with a '.ts' and '.vue' extension will be handled by
             // 'ts-loader' and after that with babel-loader
             // to transpile from ES2015 to ES5
