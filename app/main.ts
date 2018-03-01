@@ -1,8 +1,7 @@
 import Vue from 'vue';
-//import App from './App.vue';
+import './main.scss';
 
 import App from './App.vue';
-//import LanguageTypeListComponent from './components/LanguageTypeListComponent.vue';
 
 new Vue({
     el: '#app',
