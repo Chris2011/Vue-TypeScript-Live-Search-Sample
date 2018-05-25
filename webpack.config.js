@@ -1,6 +1,7 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin'),
-SpriteLoaderPlugin = require('svg-sprite-loader/plugin'),
-path = require('path');
+    SpriteLoaderPlugin = require('svg-sprite-loader/plugin'),
+    BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
+    path = require('path');
 
 module.exports = {
     entry: './app/main.ts',
@@ -60,7 +61,14 @@ module.exports = {
                 from: 'app/index.html',
                 to: 'index.html'
             }]),
-        new SpriteLoaderPlugin()
+        new SpriteLoaderPlugin(),
+        new BundleAnalyzerPlugin({
+            generateStatsFile: true,
+            statsFilename: '../reports/webpack-bundle-analyzer/stats.json',
+            reportFilename: '../reports/webpack-bundle-analyzer/report.html',
+            analyzerMode: 'static',
+            openAnalyzer: false
+        })
     ],
     devServer: {
         compress: true,
