@@ -1,22 +1,26 @@
 <template>
     <div class="wrapper">
-        <input id="languageSearch" v-model="Language" type="text" placeholder="Search available languages..." />
+        <input id="languageSearch" v-model="searchTerm" type="text" @keyup="processEvent" placeholder="Search available languages..." />
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component, Prop} from 'vue-property-decorator';
-//    import FileType from './model/FileType';
+    import {Component} from 'vue-property-decorator';
 
     // The @Component decorator indicates the class is a Vue component
     @Component
     export default class LanguageSerchFieldComponent extends Vue {
-        @Prop()
-        public Language: string;
+        private searchTerm: string;
 
         constructor() {
             super();
+
+            this.searchTerm = '';
+        }
+
+        public processEvent(): void {
+            this.$emit('searchForLang', this.searchTerm);
         }
     }
 </script>

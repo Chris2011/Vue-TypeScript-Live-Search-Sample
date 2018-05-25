@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul id="languageTypes">
-            <li @click="languageType.setExt(languageType)" v-for="languageType in LanguageTypes">
+            <li @click="languageType.setExt(languageType)" v-bind:key="languageType.LanguageName" v-for="languageType in filteredLanguageTypes">
                 <div class="icon" :class="'svg-' + languageType.Icon"></div>
                 <div>{{languageType.LanguageName}}</div>
                 <div class="file-ext">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
@@ -12,26 +12,35 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {Component} from 'vue-property-decorator';
+    import {Component, Watch, Prop} from 'vue-property-decorator';
 
     import {LanguageType} from './model/LanguageType';
 
     @Component
     export default class LanguageTypeListComponent extends Vue {
-//        @Prop()
-//        public LanguageTypes: Array<LanguageType>;
+        @Prop()
+        public searchTerm: string;
+
+        public LanguageTypes: Array<LanguageType>;
+        public filteredLanguageTypes: Array<LanguageType>;
 
         constructor() {
             super();
+
+            this.LanguageTypes = [
+                new LanguageType('Batch', 'bat'),
+                new LanguageType('C#', 'cs'),
+                new LanguageType('Java', 'java'),
+                new LanguageType('JavaScript', 'js')
+            ];
+
+            this.filteredLanguageTypes = this.LanguageTypes;
         }
 
-        public data(): Object {
-            return {
-                LanguageTypes: [
-                    new LanguageType('JavaScript', 'js'),
-                    new LanguageType('Java', 'java')
-                ]
-            };
+        @Watch('searchTerm')
+        public filterList(): void {
+            this.filteredLanguageTypes = this.LanguageTypes
+                .filter((language: LanguageType) => language.LanguageName.toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1);
         }
     }
 </script>

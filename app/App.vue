@@ -1,7 +1,7 @@
 <template>
     <div>
-        <language-search></language-search>
-        <language-list></language-list>
+        <language-search @searchForLang="updateSearchTerm"></language-search>
+        <language-list :searchTerm="searchTerm"></language-list>
     </div>
 </template>
 
@@ -19,8 +19,16 @@
         }
     })
     export default class App extends Vue {
+        public searchTerm: string;
+
         constructor() {
             super();
+
+            this.searchTerm = '';
+        }
+
+        public updateSearchTerm(value: string): void {
+            this.searchTerm = value;
         }
     }
 </script>
