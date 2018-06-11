@@ -7,7 +7,6 @@ module.exports = {
     entry: './app/main.ts',
     output: {
         path: path.resolve(__dirname, './dist'),
-        publicPath: '/generated/',
         filename: 'app.js'
     },
     module: {
