@@ -2,3 +2,4 @@ dist
 node_modules
 nbproject
 /npm-debug.log
+.tmp
