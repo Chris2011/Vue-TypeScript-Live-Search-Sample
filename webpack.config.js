@@ -1,18 +1,29 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin'),
     SpriteLoaderPlugin = require('svg-sprite-loader/plugin'),
     BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
+    VueLoaderPlugin = require('vue-loader/lib/plugin'),
     path = require('path');
 
 module.exports = {
     entry: './app/main.ts',
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'app.js'
+        filename: 'app.js',
+        publicPath: '/'
     },
     module: {
         rules: [{
                 test: /\.scss$/,
-                loader: ['style-loader', 'css-loader', 'sass-loader']
+                use: [{
+                    loader: 'style-loader'
+                }, {
+                    loader: 'css-loader',
+                    options: {
+                        url: false
+                    }
+                }, {
+                    loader: 'sass-loader'
+                }]
             }, {
             // all files with a '.ts' and '.vue' extension will be handled by
             // 'ts-loader' and after that with babel-loader
@@ -39,15 +50,6 @@ module.exports = {
                 }
             // other vue-loader options go here
             }
-        }, {
-            // https://github.com/kisenka/svg-sprite-loader
-            test: /\.svg$/,
-            loader: 'svg-sprite-loader',
-            options: {
-                extract: true,
-                dest: 'dist',
-                spriteFilename: 'sprite.svg'
-            }
         }]
     },
     resolve: {
@@ -59,6 +61,9 @@ module.exports = {
         new CopyWebpackPlugin([{
                 from: 'app/index.html',
                 to: 'index.html'
+            }, {
+                from: '.tmp/sprite.png',
+                to: 'sprite.png'
             }]),
         new SpriteLoaderPlugin(),
         new BundleAnalyzerPlugin({
@@ -67,7 +72,8 @@ module.exports = {
             reportFilename: '../reports/webpack-bundle-analyzer/report.html',
             analyzerMode: 'static',
             openAnalyzer: false
-        })
+        }),
+        new VueLoaderPlugin()
     ],
     devServer: {
         compress: true,
