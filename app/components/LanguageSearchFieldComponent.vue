@@ -18,6 +18,10 @@
 
             this.searchTerm = '';
         }
+        
+        public mounted(): void {
+            (this.$el.querySelector('#languageSearch') as HTMLInputElement).focus();
+        }
 
         public processEvent(): void {
             this.$emit('searchForLang', this.searchTerm);
@@ -27,7 +31,7 @@
 
 <style lang="scss">
     .wrapper {
-        padding: 10px;
+        padding: 8px;
 
         input {
             padding-left: 8px;
@@ -37,9 +41,9 @@
             box-shadow: inset 0 0 1px rgba(145, 153, 161, 0.2), 0 0 0 rgba(255, 255, 255, 0);
             width: 100%;
             color: #6a737c;
-            font-size: 16px;
+            font-size: 14px;
             outline: none;
-            height: 32px;
+            height: 28px;
         }
     }
 </style>
