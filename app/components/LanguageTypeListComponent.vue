@@ -14,16 +14,22 @@
     import {Component, Watch, Prop} from 'vue-property-decorator';
 
     import {LanguageType} from './model/LanguageType';
+    
+    import {KeyCode} from './model/KeyCode';
+    
+//    this.languageTypesListModel.init();
+//        this.languageTypesListModel.handleItemSelectionWithArrowKeys();
+//        this.languageTypesListModel.selectFirstElem();
 
     @Component
     export default class LanguageTypeListComponent extends Vue {
-//        private languageTypeList: HTMLUListElement;
-//        private languageTypeListItems: NodeListOf<HTMLLIElement>;
-//        private firstListElem: HTMLLIElement;
-//        private lastListElem: HTMLLIElement = null;
-        private selectedElem: HTMLLIElement = null;
-//        private textOfSelectedLiElem: Node = null;
-//        private inputField: HTMLInputElement = null;
+        private languageTypeList: HTMLUListElement | null;
+        private languageTypeListItems: NodeListOf<HTMLLIElement> | null;
+        private firstListElem: HTMLLIElement | null;
+        private lastListElem: HTMLLIElement | null;
+        private previousListElem: HTMLLIElement | null;
+        private nextListElem: HTMLLIElement | null;
+        private selectedElem: HTMLLIElement | null;
             
         @Prop()
         public searchTerm: string;
@@ -95,6 +101,23 @@
             this.filteredLanguageTypes = this.LanguageTypes;
         }
         
+//        public get List(): HTMLUListElement {
+//            return this.languageTypeList;
+//        }
+//
+//        public get LanguageTypeListItems(): NodeListOf<HTMLLIElement> {
+//            return this.languageTypeListItems;
+//        }
+//
+
+//        public get FirstListElem(): HTMLLIElement {
+//            return this.firstListElem;
+//        }
+//
+//        public get LastListElem(): HTMLLIElement {
+//            return this.lastListElem;
+//        }
+        
         public chooseExt($event: MouseEvent, selectedLanguageType: LanguageType): void {
             this.setSelectedClass($event);
             
@@ -108,6 +131,70 @@
                 
             // TODO: Select the first element of the filtered list.
         }
+
+        public mounted(): void {
+            this.languageTypeList = this.$el as HTMLUListElement;
+            this.languageTypeListItems = this.$el.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
+            this.firstListElem = this.$el.firstChild as HTMLLIElement;
+            this.lastListElem = this.$el.lastChild as HTMLLIElement;
+
+            this.handleItemSelectionWithArrowKeys();
+        }
+        
+        private moveUp(): void {
+            if(this.selectedElem) {
+                if(!this.previousListElem) {
+                    this.selectedElem.classList.remove('selected');
+
+                    this.selectedElem = this.lastListElem;
+
+                    this.selectedElem.classList.toggle('selected');
+                    this.languageTypeList.scrollTop = 800;
+                } else {
+                    if(this.selectedElem.offsetTop < 450) {
+                        this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) / this.selectedElem.offsetHeight);
+                    }
+
+                    this.selectedElem.classList.remove('selected');
+
+                    this.selectedElem = this.previousListElem;
+
+                    this.selectedElem.classList.toggle('selected');
+                }
+            } else {
+                this.selectedElem = this.lastListElem;
+
+                this.selectedElem.classList.toggle('selected');
+                this.languageTypeList.scrollTop = 800;
+            }
+        }
+
+        private moveDown(): void {
+            if(this.selectedElem) {
+                if(this.selectedElem.offsetTop > 400) {
+                    this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) * this.selectedElem.offsetHeight);
+                }
+                
+                if(!this.nextListElem) {
+                    this.selectedElem.classList.remove('selected');
+
+                    this.selectedElem = this.firstListElem;
+
+                    this.selectedElem.classList.toggle('selected');
+                    this.languageTypeList.scrollTop = 0;
+                } else {
+                    this.selectedElem.classList.remove('selected');
+                    
+                    this.selectedElem = this.nextListElem;
+
+                    this.selectedElem.classList.toggle('selected');
+                }
+            } else {
+                this.selectedElem = this.firstListElem;
+
+                this.selectedElem.classList.toggle('selected');
+            }
+        }
         
         private setSelectedClass($event: MouseEvent): void {
             this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
@@ -116,10 +203,32 @@
                 this.selectedElem.classList.toggle('selected');
             }
 
-            ($event.target as HTMLLIElement).classList.toggle('selected');
+            this.selectedElem = $event.target as HTMLLIElement;
+            this.selectedElem.classList.toggle('selected');
+        }
+        
+        private handleItemSelectionWithArrowKeys(): void {
+            document.querySelector('body').addEventListener('keydown', (evt: KeyboardEvent) => {
+                this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
+                this.previousListElem = this.selectedElem.previousElementSibling as HTMLLIElement;
+                this.nextListElem = this.selectedElem.nextElementSibling as HTMLLIElement;
+                
+                if(evt.key === KeyCode.Up) {
+                    evt.preventDefault();
 
-            // TODO: Trigger set focus to input again
-//            this.triggerFocusUpdate();
+                    this.moveUp();
+                } else if(evt.key === KeyCode.Down) {
+                    evt.preventDefault();
+
+                    this.moveDown();
+                }
+            });
+        }
+        
+        private getIndexOfElem(selectedElem: HTMLLIElement): number {
+            return [].findIndex.call(this.languageTypeListItems, (elem: HTMLLIElement) => {
+                return elem === selectedElem;
+            });
         }
         
 //        public selectFirstElem(): void {
@@ -157,6 +266,10 @@
             transition: background-color 100ms ease, color 100ms ease;
             display: flex;
             align-items: center;
+            
+            div {
+                pointer-events: none;
+            }
 
             .icon {
                 width: 16px;
