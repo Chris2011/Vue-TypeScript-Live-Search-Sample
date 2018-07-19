@@ -73,6 +73,7 @@
                 new LanguageType('Lua', 'lua', true),
                 new LanguageType('Makefile', '', false),
                 new LanguageType('Markdown', 'md', true),
+                new LanguageType('NetBeans Mind Map', 'mmd', true),
                 new LanguageType('Perl', 'pl', true),
                 new LanguageType('PHP', 'php', false),
                 new LanguageType('Plain Text', 'txt', false),
@@ -210,8 +211,11 @@
         private handleItemSelectionWithArrowKeys(): void {
             document.querySelector('body').addEventListener('keydown', (evt: KeyboardEvent) => {
                 this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
-                this.previousListElem = this.selectedElem.previousElementSibling as HTMLLIElement;
-                this.nextListElem = this.selectedElem.nextElementSibling as HTMLLIElement;
+                
+                if (this.selectedElem) {
+                    this.previousListElem = this.selectedElem.previousElementSibling as HTMLLIElement;
+                    this.nextListElem = this.selectedElem.nextElementSibling as HTMLLIElement;
+                }
                 
                 if(evt.key === KeyCode.Up) {
                     evt.preventDefault();
