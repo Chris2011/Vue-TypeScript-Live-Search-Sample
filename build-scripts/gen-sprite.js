@@ -6,8 +6,8 @@ nsg({
     ],
     compositor: 'jimp',
     stylesheet: 'prefixed-css',
-    spritePath: './.tmp/sprite.png',
-    stylesheetPath: './.tmp/sprite.css',
+    spritePath: './dist/sprite.png',
+    stylesheetPath: './dist/sprite.css',
     stylesheetOptions: {
         prefix: 'svg-'
     }
