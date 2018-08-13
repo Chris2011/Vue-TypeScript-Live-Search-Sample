@@ -61,7 +61,7 @@
     "analyze-package": "webpack-bundle-analyzer ./reports/webpack-bundle-analyzer/stats.json",
     "pree2e": "webdriver-manager update",
     "e2e": "protractor",
-    "serve": "webpack-dev-server --mode development",
+    "serve": "npm run svg2png && webpack-dev-server --mode development",
     "test": "mocha -r ts-node/register tests/**/*.spec.ts",
     "ver": "webpack -v"
   }
