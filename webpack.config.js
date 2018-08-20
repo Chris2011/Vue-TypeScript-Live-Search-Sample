@@ -61,6 +61,9 @@ module.exports = {
         new CopyWebpackPlugin([{
                 from: 'app/index.html',
                 to: 'index.html'
+            }, {
+                from: '.tmp/sprite.png',
+                to: 'sprite.png'
             }]),
         new SpriteLoaderPlugin(),
         new BundleAnalyzerPlugin({
