@@ -54,8 +54,8 @@
   },
   "scripts": {
     "build-dev": "npm run test && npm run svg2png && webpack --mode development",
-    "fast-build-dev": "webpack",
     "build-prod": "npm run test && npm run svg2png && webpack --mode production --optimize-minimize",
+    "fast-build-dev": "webpack",
     "svg2png": "svg2png-many -i ./app/icons -o ./.tmp/icons -w 16 -h 16 && node ./build-scripts/gen-sprite.js",
     "sourcemap-explorer": "source-map-explorer ./dist/app.js ./dist/app.js.map",
     "analyze-package": "webpack-bundle-analyzer ./reports/webpack-bundle-analyzer/stats.json",
