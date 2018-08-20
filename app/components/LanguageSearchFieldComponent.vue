@@ -35,6 +35,10 @@
             document && document.querySelector('body').addEventListener('click', (evt: MouseEvent) => {
                 this.searchField.focus();
             });
+            
+            document && document.querySelector('#languageTypes').addEventListener('keyup', (evt: KeyboardEvent) => {
+                this.searchField.focus();
+            })
         }
     }
 </script>
