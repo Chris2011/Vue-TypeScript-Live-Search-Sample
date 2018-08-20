@@ -14,7 +14,6 @@
     import {Component, Watch, Prop} from 'vue-property-decorator';
 
     import {LanguageType} from './model/LanguageType';
-    
     import {KeyCode} from './model/KeyCode';
     
 //    this.languageTypesListModel.init();
@@ -102,23 +101,6 @@
             this.filteredLanguageTypes = this.LanguageTypes;
         }
         
-//        public get List(): HTMLUListElement {
-//            return this.languageTypeList;
-//        }
-//
-//        public get LanguageTypeListItems(): NodeListOf<HTMLLIElement> {
-//            return this.languageTypeListItems;
-//        }
-//
-
-//        public get FirstListElem(): HTMLLIElement {
-//            return this.firstListElem;
-//        }
-//
-//        public get LastListElem(): HTMLLIElement {
-//            return this.lastListElem;
-//        }
-        
         public chooseExt($event: MouseEvent, selectedLanguageType: LanguageType): void {
             this.setSelectedClass($event);
             
@@ -130,16 +112,27 @@
             this.filteredLanguageTypes = this.LanguageTypes
                 .filter((language: LanguageType) => language.LanguageName.toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1);
                 
-            // TODO: Select the first element of the filtered list.
+            const findFirstMatchedElement = this.$el.querySelector(`.svg-${this.filteredLanguageTypes[0] && this.filteredLanguageTypes[0].FileExt}`);
+            this.firstListElem = (findFirstMatchedElement && findFirstMatchedElement.parentElement) as HTMLLIElement;
+            
+            if(!!this.searchTerm) {
+                this.firstListElem && this.firstListElem.classList.add('selected');
+            } else {
+                this.$el.querySelector('.selected').classList.remove('selected');
+            }
         }
 
         public mounted(): void {
+            this.prepareElements();
+
+            this.handleItemSelectionWithArrowKeys();
+        }
+        
+        private prepareElements(): void {
             this.languageTypeList = this.$el as HTMLUListElement;
             this.languageTypeListItems = this.$el.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
             this.firstListElem = this.$el.firstChild as HTMLLIElement;
             this.lastListElem = this.$el.lastChild as HTMLLIElement;
-
-            this.handleItemSelectionWithArrowKeys();
         }
         
         private moveUp(): void {
@@ -165,12 +158,14 @@
             } else {
                 this.selectedElem = this.lastListElem;
 
-                this.selectedElem.classList.toggle('selected');
+                this.selectedElem.classList.add('selected');
                 this.languageTypeList.scrollTop = 800;
             }
         }
 
         private moveDown(): void {
+            this.prepareElements();
+            
             if(this.selectedElem) {
                 if(this.selectedElem.offsetTop > 400) {
                     this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) * this.selectedElem.offsetHeight);
@@ -193,7 +188,7 @@
             } else {
                 this.selectedElem = this.firstListElem;
 
-                this.selectedElem.classList.toggle('selected');
+                this.selectedElem.classList.add('selected');
             }
         }
         
@@ -234,24 +229,6 @@
                 return elem === selectedElem;
             });
         }
-        
-//        public selectFirstElem(): void {
-//            this.inputField.addEventListener('keyup', e => {
-//                if(e.key !== KeyCode.Down && e.key !== KeyCode.Up) {
-//                    this.selectedElem = document.querySelector('.selected') as HTMLLIElement;
-//
-//                    if(this.selectedElem) {
-//                        this.selectedElem.classList.remove('selected');
-//                    }
-//
-//                    if(!!this.inputField.value) {
-//                        this.firstListElem && this.firstListElem.classList.add('selected');
-//                    } else {
-//                        this.firstListElem && this.firstListElem.classList.remove('selected');
-//                    }
-//                }
-//            });
-//        }
     }
 </script>
 
