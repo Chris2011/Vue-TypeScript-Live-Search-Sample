@@ -1,10 +1,10 @@
 <template>
     <ul id="languageTypes">
-        <li @click="chooseExt($event, languageType)" v-bind:key="languageType.LanguageName" v-for="languageType in filteredLanguageTypes">
-            <div class="icon" :class="'svg-' + languageType.Icon"></div>
-            <div>{{languageType.LanguageName}}</div>
-            <div class="small">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
-            <div class="small" v-if="languageType.IsPluginRequired"> - plugin is required</div>
+        <li :tabindex="1" @click="chooseExt($event, languageType)" v-bind:key="languageType.LanguageName" v-for="languageType in filteredLanguageTypes">
+            <div v-once class="icon" :class="'svg-' + languageType.Icon"></div>
+            <div v-once>{{languageType.LanguageName}}</div>
+            <div v-once class="small">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
+            <div v-once class="small" v-if="languageType.IsPluginRequired"> - plugin is required</div>
         </li>
     </ul>
 </template>
@@ -16,14 +16,8 @@
     import {LanguageType} from './model/LanguageType';
     import {KeyCode} from './model/KeyCode';
     
-//    this.languageTypesListModel.init();
-//        this.languageTypesListModel.handleItemSelectionWithArrowKeys();
-//        this.languageTypesListModel.selectFirstElem();
-
     @Component
     export default class LanguageTypeListComponent extends Vue {
-        private languageTypeList: HTMLUListElement | null;
-        private languageTypeListItems: NodeListOf<HTMLLIElement> | null;
         private firstListElem: HTMLLIElement | null;
         private lastListElem: HTMLLIElement | null;
         private previousListElem: HTMLLIElement | null;
@@ -115,10 +109,12 @@
             const findFirstMatchedElement = this.$el.querySelector(`.svg-${this.filteredLanguageTypes[0] && this.filteredLanguageTypes[0].FileExt}`);
             this.firstListElem = (findFirstMatchedElement && findFirstMatchedElement.parentElement) as HTMLLIElement;
             
+            this.selectedElem = this.$el.querySelector('.selected');
+            
             if(!!this.searchTerm) {
                 this.firstListElem && this.firstListElem.classList.add('selected');
             } else {
-                this.$el.querySelector('.selected').classList.remove('selected');
+                this.selectedElem && this.selectedElem.classList.remove('selected');
             }
         }
 
@@ -129,8 +125,6 @@
         }
         
         private prepareElements(): void {
-            this.languageTypeList = this.$el as HTMLUListElement;
-            this.languageTypeListItems = this.$el.querySelectorAll('li') as NodeListOf<HTMLLIElement>;
             this.firstListElem = this.$el.firstChild as HTMLLIElement;
             this.lastListElem = this.$el.lastChild as HTMLLIElement;
         }
@@ -142,24 +136,23 @@
 
                     this.selectedElem = this.lastListElem;
 
-                    this.selectedElem.classList.toggle('selected');
-                    this.languageTypeList.scrollTop = 800;
+                    this.selectedElem.focus();
+                    this.selectedElem.classList.add('selected');
                 } else {
-                    if(this.selectedElem.offsetTop < 450) {
-                        this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) / this.selectedElem.offsetHeight);
-                    }
-
                     this.selectedElem.classList.remove('selected');
 
                     this.selectedElem = this.previousListElem;
 
-                    this.selectedElem.classList.toggle('selected');
+                    this.selectedElem.focus();
+                    this.selectedElem.classList.add('selected');
                 }
             } else {
                 this.selectedElem = this.lastListElem;
-
-                this.selectedElem.classList.add('selected');
-                this.languageTypeList.scrollTop = 800;
+                
+                if (this.selectedElem) {
+                    this.selectedElem.focus();
+                    this.selectedElem.classList.add('selected');
+                }
             }
         }
 
@@ -167,28 +160,29 @@
             this.prepareElements();
             
             if(this.selectedElem) {
-                if(this.selectedElem.offsetTop > 400) {
-                    this.languageTypeList.scrollTop = (this.getIndexOfElem(this.selectedElem) * this.selectedElem.offsetHeight);
-                }
-                
                 if(!this.nextListElem) {
                     this.selectedElem.classList.remove('selected');
 
                     this.selectedElem = this.firstListElem;
 
-                    this.selectedElem.classList.toggle('selected');
-                    this.languageTypeList.scrollTop = 0;
+                    this.selectedElem.focus();
+                    this.selectedElem.classList.add('selected');
                 } else {
                     this.selectedElem.classList.remove('selected');
                     
                     this.selectedElem = this.nextListElem;
 
-                    this.selectedElem.classList.toggle('selected');
+                    this.selectedElem.focus();
+                    this.selectedElem.classList.add('selected');
                 }
             } else {
                 this.selectedElem = this.firstListElem;
+                
+                if (this.selectedElem) {
+                    this.selectedElem.focus();
+                    this.selectedElem.classList.add('selected');    
+                }
 
-                this.selectedElem.classList.add('selected');
             }
         }
         
@@ -221,12 +215,6 @@
 
                     this.moveDown();
                 }
-            });
-        }
-        
-        private getIndexOfElem(selectedElem: HTMLLIElement): number {
-            return [].findIndex.call(this.languageTypeListItems, (elem: HTMLLIElement) => {
-                return elem === selectedElem;
             });
         }
     }
