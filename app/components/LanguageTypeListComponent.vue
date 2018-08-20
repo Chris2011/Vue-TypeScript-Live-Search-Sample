@@ -1,6 +1,6 @@
 <template>
     <ul id="languageTypes">
-        <li :tabindex="1" @click="chooseExt($event, languageType)" v-bind:key="languageType.LanguageName" v-for="languageType in filteredLanguageTypes">
+        <li :tabindex="++index" @click="chooseExt($event, languageType)" v-bind:key="languageType.LanguageName" v-for="(languageType, index) in filteredLanguageTypes">
             <div v-once class="icon" :class="'svg-' + languageType.Icon"></div>
             <div v-once>{{languageType.LanguageName}}</div>
             <div v-once class="small">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
