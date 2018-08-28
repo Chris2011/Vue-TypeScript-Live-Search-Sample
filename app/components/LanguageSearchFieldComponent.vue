@@ -7,6 +7,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import {Component} from 'vue-property-decorator';
+    
+    import {KeyCode} from './model/KeyCode';
 
     // The @Component decorator indicates the class is a Vue component
     @Component
@@ -34,11 +36,18 @@
         private alwaysSetFocusOnClick(): void {
             document && document.querySelector('body').addEventListener('click', (evt: MouseEvent) => {
                 this.searchField.focus();
+                this.searchField.value = '';
+            });
+            
+            document && document.querySelector('body').addEventListener('keyup', (evt: KeyboardEvent) => {
+                if(evt.keyCode === KeyCode.Enter) {
+                    this.searchField.value = '';
+                }
             });
             
             document && document.querySelector('#languageTypes').addEventListener('keyup', (evt: KeyboardEvent) => {
                 this.searchField.focus();
-            })
+            });
         }
     }
 </script>

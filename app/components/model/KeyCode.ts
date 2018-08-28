@@ -1,5 +1,5 @@
 export enum KeyCode {
-    Enter = 'Enter',
-    Up = 'ArrowUp',
-    Down = 'ArrowDown'
+    Enter = 13,
+    Up = 38,
+    Down = 40
 }

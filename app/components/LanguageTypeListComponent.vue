@@ -3,7 +3,7 @@
         <li :tabindex="++index" @click="chooseExt($event, languageType)" v-bind:key="languageType.LanguageName" v-for="(languageType, index) in filteredLanguageTypes">
             <div v-once class="icon" :class="'svg-' + languageType.Icon"></div>
             <div v-once>{{languageType.LanguageName}}</div>
-            <div v-once class="small">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
+            <div v-once class="small ext">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
             <div v-once class="small" v-if="languageType.IsPluginRequired"> - plugin is required</div>
         </li>
     </ul>
@@ -95,7 +95,7 @@
             this.filteredLanguageTypes = this.LanguageTypes;
         }
         
-        public chooseExt($event: MouseEvent, selectedLanguageType: LanguageType): void {
+        public chooseExt($event: Event, selectedLanguageType: LanguageType): void {
             this.setSelectedClass($event);
             
             selectedLanguageType.setExt(selectedLanguageType);
@@ -180,13 +180,13 @@
                 
                 if (this.selectedElem) {
                     this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');    
+                    this.selectedElem.classList.add('selected');
                 }
 
             }
         }
         
-        private setSelectedClass($event: MouseEvent): void {
+        private setSelectedClass($event: Event): void {
             this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
 
             if(this.selectedElem) {
@@ -206,16 +206,31 @@
                     this.nextListElem = this.selectedElem.nextElementSibling as HTMLLIElement;
                 }
                 
-                if(evt.key === KeyCode.Up) {
+                if(evt.keyCode === KeyCode.Up) {
                     evt.preventDefault();
 
                     this.moveUp();
-                } else if(evt.key === KeyCode.Down) {
+                } else if(evt.keyCode === KeyCode.Down) {
                     evt.preventDefault();
 
                     this.moveDown();
                 }
+                
+                if(evt.keyCode === KeyCode.Enter) {
+                    this.getDataFromSelectedElem(evt);
+                }
             });
+        }
+        
+        private getDataFromSelectedElem(evt: KeyboardEvent): void {
+            if(this.selectedElem) {
+                this.searchTerm = '';
+            }
+            
+            let languageExt: string = this.selectedElem && this.selectedElem.querySelector('.ext').textContent.replace('(.', '').replace(')', ''),
+                languageType: LanguageType = new LanguageType('', languageExt);
+
+            this.chooseExt(evt, languageType);
         }
     }
 </script>
