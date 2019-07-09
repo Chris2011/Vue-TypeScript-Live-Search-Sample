@@ -18,18 +18,18 @@ export default class SearchStore extends VuexModule {
 
         this.searchState = {
             SearchTerm: '',
-            SelectedElem: null
+            SelectedElem: {},
         } as SearchState;
     }
 
     @Action
-    public updateSearchTermAction(searchTerm: string): void {
-        this.updateSearchTerm({ searchTerm: searchTerm });
+    public updateSearchTerm(searchTerm: string): void {
+        this.updateSearchTermMutation({ searchTerm: searchTerm });
     }
 
     @Action
-    public updateSelectedElementAction(selectedElem: ILanguageType): void {
-        this.updateSelectedElement({selectedElem: selectedElem});
+    public updateSelectedElement(selectedElem: ILanguageType | null): void {
+        this.updateSelectedElementMutation({ selectedElem: selectedElem });
     }
 
     public get SearchState(): SearchState {
@@ -37,12 +37,26 @@ export default class SearchStore extends VuexModule {
     }
 
     @Mutation
-    private updateSearchTerm(payload: { searchTerm: string }): void {
+    private updateSearchTermMutation(payload: { searchTerm: string }): void {
         this.searchState.SearchTerm = payload.searchTerm;
     }
 
     @Mutation
-    private updateSelectedElement(payload: { selectedElem: ILanguageType }): void {
-        this.searchState.SelectedElem = payload.selectedElem;
+    private updateSelectedElementMutation(payload: {
+        selectedElem: ILanguageType | null;
+    }): void {
+        if (payload.selectedElem) {
+            if (this.searchState.SelectedElem) {
+                this.searchState.SelectedElem.IsSelected = false;
+                this.searchState.SelectedElem.HasFocus = false;
+            }
+
+            this.searchState.SelectedElem = payload.selectedElem;
+
+            this.searchState.SelectedElem.IsSelected = true;
+            this.searchState.SelectedElem.HasFocus = true;
+        } else {
+            this.searchState.SelectedElem = null;
+        }
     }
 }

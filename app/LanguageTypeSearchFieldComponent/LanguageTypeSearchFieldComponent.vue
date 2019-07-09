@@ -4,7 +4,6 @@
             id="languageSearch"
             v-model="searchStore.SearchState.SearchTerm"
             type="text"
-            @keydown.enter="deleteValue"
             placeholder="Search available languages..."
         />
     </div>
@@ -51,7 +50,7 @@ export default class LanguageTypeSerchFieldComponent extends Vue {
 
     public deleteValue(): void {
         if (this.searchStore.SearchState.SelectedElem) {
-            this.searchStore.SearchState.SearchTerm = '';
+            this.searchStore.updateSearchTerm('');
         }
     }
 

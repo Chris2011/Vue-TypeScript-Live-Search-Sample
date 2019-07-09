@@ -6,6 +6,7 @@
             v-for="(languageType, index) in filteredLanguageTypes"
             :key="languageType.LanguageName"
             :class="{ selected: languageType.IsSelected }"
+            :focus="languageType.HasFocus"
         >
             <div v-once class="icon" :class="'svg-' + languageType.Icon"></div>
             <div v-once>{{ languageType.LanguageName }}</div>
@@ -30,11 +31,11 @@ import SearchStore from '../shared/store/SearchStore';
 
 @Component
 export default class LanguageTypeListComponent extends Vue {
-    private firstListElem: HTMLLIElement | null;
-    private lastListElem: HTMLLIElement | null;
-    private previousListElem: HTMLLIElement | null;
-    private nextListElem: HTMLLIElement | null;
-    private selectedElem: HTMLLIElement | null;
+    private firstListElem: ILanguageType | null;
+    private lastListElem: ILanguageType | null;
+
+    private prevElem: ILanguageType | null;
+    private nextElem: ILanguageType | null;
 
     private languageTypes: ILanguageType[];
     public filteredLanguageTypes: ILanguageType[];
@@ -44,6 +45,12 @@ export default class LanguageTypeListComponent extends Vue {
         super();
 
         this.searchStore = getModule(SearchStore);
+
+        this.prevElem = null;
+        this.nextElem = null;
+
+        this.firstListElem = null;
+        this.lastListElem = null;
 
         this.languageTypes = [
             new LanguageType('ANTLRv3', 'g', true),
@@ -108,11 +115,7 @@ export default class LanguageTypeListComponent extends Vue {
     }
 
     public chooseExt($event: Event, selectedLanguageType: LanguageType): void {
-        console.log('selectedLanguageType: ', selectedLanguageType);
-        //            this.setSelectedClass($event);
-        // selectedLanguageType.IsSelected = true;
-
-        this.searchStore.updateSelectedElementAction(selectedLanguageType);
+        this.searchStore.updateSelectedElement(selectedLanguageType);
 
         selectedLanguageType.setExt(selectedLanguageType);
     }
@@ -135,22 +138,12 @@ export default class LanguageTypeListComponent extends Vue {
             this.filteredLanguageTypes.length > 0 &&
             this.searchStore.SearchState.SearchTerm
         ) {
-            this.filteredLanguageTypes[0].IsSelected = true;
-            this.searchStore.SearchState.SelectedElem = this.filteredLanguageTypes[0];
+            this.searchStore.updateSelectedElement(
+                this.filteredLanguageTypes[0],
+            );
         } else {
-            this.searchStore.SearchState.SelectedElem = null;
+            this.searchStore.updateSelectedElement(null);
         }
-
-        //            const findFirstMatchedElement = this.$el.querySelector(`.svg-${}`);
-        //            this.firstListElem = (findFirstMatchedElement && findFirstMatchedElement.parentElement) as HTMLLIElement;
-        //
-        //            this.selectedElem = this.$el.querySelector('.selected');
-        //
-        //            if(!!this.searchTerm) {
-        //                this.firstListElem && this.firstListElem.classList.add('selected');
-        //            } else {
-        //                this.selectedElem && this.selectedElem.classList.remove('selected');
-        //            }
     }
 
     public mounted(): void {
@@ -159,100 +152,53 @@ export default class LanguageTypeListComponent extends Vue {
         this.handleItemSelectionWithArrowKeys();
     }
 
-    //        get computedSearchTerm() {
-    //            return this.searchTerm;
-    //        }
-
-    //        set computedSearchTerm(value) {
-    //            this.searchTerm = value;
-    //        }
-
     private prepareElements(): void {
-        this.firstListElem = this.$el.firstChild as HTMLLIElement;
-        this.lastListElem = this.$el.lastChild as HTMLLIElement;
+        this.firstListElem = this.filteredLanguageTypes[0];
+        this.lastListElem = this.filteredLanguageTypes[this.filteredLanguageTypes.length - 1];
     }
-    //
+
     private moveUp(): void {
-        if (this.selectedElem) {
-            if (!this.previousListElem) {
-                this.selectedElem.classList.remove('selected');
-
-                this.selectedElem = this.lastListElem;
-
-                // this.selectedElem.focus();
-                // this.selectedElem.classList.add('selected');
+        if (this.searchStore.SearchState.SelectedElem) {
+            if (!this.prevElem) {
+                this.searchStore.updateSelectedElement(this.lastListElem);
             } else {
-                this.selectedElem.classList.remove('selected');
-
-                this.selectedElem = this.previousListElem;
-
-                this.selectedElem.focus();
-                this.selectedElem.classList.add('selected');
+                this.searchStore.updateSelectedElement(this.prevElem);
             }
         } else {
-            this.selectedElem = this.lastListElem;
-
-            if (this.selectedElem) {
-                this.selectedElem.focus();
-                this.selectedElem.classList.add('selected');
-            }
+            this.searchStore.updateSelectedElement(this.lastListElem);
         }
     }
 
     private moveDown(): void {
         this.prepareElements();
 
-        if (this.selectedElem) {
-            if (!this.nextListElem) {
-                this.selectedElem.classList.remove('selected');
-
-                this.selectedElem = this.firstListElem;
-
-                this.selectedElem!.focus();
-                this.selectedElem!.classList.add('selected');
+        if (this.searchStore.SearchState.SelectedElem) {
+            if (!this.nextElem) {
+                this.searchStore.updateSelectedElement(this.firstListElem);
             } else {
-                this.selectedElem.classList.remove('selected');
-
-                this.selectedElem = this.nextListElem;
-
-                this.selectedElem.focus();
-                this.selectedElem.classList.add('selected');
+                this.searchStore.updateSelectedElement(this.nextElem);
             }
         } else {
-            this.selectedElem = this.firstListElem;
-
-            if (this.selectedElem) {
-                this.selectedElem.focus();
-                this.selectedElem.classList.add('selected');
-            }
+            this.searchStore.updateSelectedElement(this.firstListElem);
         }
     }
-
-    //        private setSelectedClass($event: Event): void {
-    //            this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
-    //
-    //            if(this.selectedElem) {
-    //                this.selectedElem.classList.toggle('selected');
-    //            }
-    //
-    //            this.selectedElem = $event.target as HTMLLIElement;
-    //            this.selectedElem.classList.toggle('selected');
-    //        }
 
     private handleItemSelectionWithArrowKeys(): void {
         const body = document.querySelector('body');
 
         if (body) {
-            body.addEventListener('keydown', (evt: KeyboardEvent) => {
-                this.selectedElem = this.$el.querySelector(
-                    '.selected',
-                ) as HTMLLIElement;
-
-                if (this.selectedElem) {
-                    this.previousListElem = this.selectedElem
-                        .previousElementSibling as HTMLLIElement;
-                    this.nextListElem = this.selectedElem
-                        .nextElementSibling as HTMLLIElement;
+            body.addEventListener('keyup', (evt: KeyboardEvent) => {
+                if (this.searchStore.SearchState.SelectedElem) {
+                    this.prevElem = this.filteredLanguageTypes[
+                        this.filteredLanguageTypes.findIndex(
+                            (language: ILanguageType) => language.IsSelected,
+                        ) - 1
+                    ];
+                    this.nextElem = this.filteredLanguageTypes[
+                        this.filteredLanguageTypes.findIndex(
+                            (language: ILanguageType) => language.IsSelected,
+                        ) + 1
+                    ];
                 }
 
                 if (evt.keyCode === KeyCode.Up) {
@@ -266,7 +212,7 @@ export default class LanguageTypeListComponent extends Vue {
                 }
 
                 if (evt.keyCode === KeyCode.Enter) {
-                    if (this.selectedElem) {
+                    if (this.searchStore.SearchState.SelectedElem) {
                         this.getDataFromSelectedElem(evt);
                     }
                 }
@@ -275,20 +221,24 @@ export default class LanguageTypeListComponent extends Vue {
     }
 
     private getDataFromSelectedElem(evt: KeyboardEvent): void {
-        // if(this.selectedElem) {
-        //     this.emitClear();
-        // }
+        const selectedElem: LanguageType | null = this.searchStore.SearchState
+            .SelectedElem as LanguageType;
 
-        const ext: HTMLDivElement | null =
-            this.selectedElem && this.selectedElem.querySelector('.ext');
+        if (selectedElem) {
+            const ext: string | null = selectedElem.FileExt;
 
-        if (ext) {
-            const languageExt: string = ext
-                    .textContent!.replace('(.', '')
-                    .replace(')', ''),
-                languageType: LanguageType = new LanguageType('', languageExt);
+            if (ext) {
+                const languageExt: string = ext
+                        .replace('(.', '')
+                        .replace(')', ''),
+                    languageType: LanguageType = new LanguageType(
+                        '',
+                        languageExt,
+                    );
 
-            this.chooseExt(evt, languageType);
+                selectedElem.setExt(languageType);
+                this.searchStore.updateSearchTerm('');
+            }
         }
     }
 }
