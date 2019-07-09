@@ -1,312 +1,343 @@
 <template>
     <ul id="languageTypes">
-        <li :tabindex="++index"
+        <li
+            :tabindex="++index"
             @click="chooseExt($event, languageType)"
             v-for="(languageType, index) in filteredLanguageTypes"
             :key="languageType.LanguageName"
-            :class="{selected: languageType.IsSelected}">
+            :class="{ selected: languageType.IsSelected }"
+        >
             <div v-once class="icon" :class="'svg-' + languageType.Icon"></div>
-            <div v-once>{{languageType.LanguageName}}</div>
-            <div v-once class="small ext">{{languageType.FileExt && '(.' + languageType.FileExt + ')'}}</div>
-            <div v-once class="small" v-if="languageType.IsPluginRequired"> - plugin is required</div>
+            <div v-once>{{ languageType.LanguageName }}</div>
+            <div v-once class="small ext">
+                {{ languageType.FileExt && '(.' + languageType.FileExt + ')' }}
+            </div>
+            <div v-once class="small" v-if="languageType.IsPluginRequired">
+                - plugin is required
+            </div>
         </li>
     </ul>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {Component, Watch, Prop, Emit} from 'vue-property-decorator';
+import Vue from 'vue';
+import { Component, Watch } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
 
-    import {ILanguageType, LanguageType} from '../shared/model/LanguageType';
-    import {KeyCode} from '../shared/model/KeyCode';
-    
-    @Component
-    export default class LanguageTypeListComponent extends Vue {
-        private firstListElem: HTMLLIElement | null;
-        private lastListElem: HTMLLIElement | null;
-        private previousListElem: HTMLLIElement | null;
-        private nextListElem: HTMLLIElement | null;
-        private selectedElem: HTMLLIElement | null;
-            
-        @Prop(String)
-        public searchTerm: string;
+import ILanguageType, { LanguageType } from '../shared/model/LanguageType';
+import { KeyCode } from '../shared/model/KeyCode';
+import SearchStore from '../shared/store/SearchStore';
 
-        public LanguageTypes: ILanguageType[];
-        public filteredLanguageTypes: ILanguageType[];
+@Component
+export default class LanguageTypeListComponent extends Vue {
+    private firstListElem: HTMLLIElement | null;
+    private lastListElem: HTMLLIElement | null;
+    private previousListElem: HTMLLIElement | null;
+    private nextListElem: HTMLLIElement | null;
+    private selectedElem: HTMLLIElement | null;
 
-        constructor() {
-            super();
+    private languageTypes: ILanguageType[];
+    public filteredLanguageTypes: ILanguageType[];
+    private searchStore: SearchStore;
 
-            this.LanguageTypes = [
-                new LanguageType('ANTLRv3', 'g', true),
-                new LanguageType('ANTLRv4', 'g4', true),
-                new LanguageType('Assembler', 'asm', false),
-                new LanguageType('Batch', 'bat', false),
-                new LanguageType('C', 'c', false),
-                new LanguageType('C#', 'cs', true),
-                new LanguageType('C++', 'cpp', false),
-                new LanguageType('CSS', 'css', false),
-                new LanguageType('Clojure', 'clj', true),
-                new LanguageType('CoffeeScript', 'coffee', true),
-                new LanguageType('Dockerfile', '', false),
-                new LanguageType('Freemarker', 'ftl', true),
-                new LanguageType('Galen', 'gspec', true),
-                new LanguageType('GLSL', 'glsl', true),
-                new LanguageType('Go', 'go', true),
-                new LanguageType('Groovy', 'groovy', true),
-                new LanguageType('HAML', 'haml', true),
-                new LanguageType('Handlebars', 'hbs', true),
-                new LanguageType('HTML', 'html', false),
-                new LanguageType('Ini', 'ini', false),
-                new LanguageType('Jade/Pug', 'pug', false),
-                new LanguageType('Java', 'java', false),
-                new LanguageType('JavaScript', 'js', false),
-                new LanguageType('JavaScript React', 'jsx', false),
-                new LanguageType('JSP', 'jsp', false),
-                new LanguageType('JSON', 'json', false),
-                new LanguageType('Kotlin', 'kt', true),
-                new LanguageType('Less', 'less', false),
-                new LanguageType('LISP', 'lisp', true),
-                new LanguageType('Lua', 'lua', true),
-                new LanguageType('Makefile', '', false),
-                new LanguageType('Markdown', 'md', true),
-                new LanguageType('NetBeans Mind Map', 'mmd', true),
-                new LanguageType('Perl', 'pl', true),
-                new LanguageType('PHP', 'php', false),
-                new LanguageType('Plain Text', 'txt', false),
-                new LanguageType('PLSQL', 'plsql', true),
-                new LanguageType('Puppet', 'pp', true),
-                new LanguageType('Python', 'py', true),
-                new LanguageType('R', 'r', true),
-                new LanguageType('Ruby', 'rb', true),
-                new LanguageType('Rust', 'rs', true),
-                new LanguageType('Sass', 'sass', false),
-                new LanguageType('Scala', 'scala', true),
-                new LanguageType('Scss', 'scss', false),
-                new LanguageType('Smarty', 'tpl', false),
-                new LanguageType('SQL', 'sql', false),
-                new LanguageType('Shell Script', 'sh', true),
-                new LanguageType('Tex', 'tex', true),
-                new LanguageType('Twig', 'twig', false),
-                new LanguageType('TypeScript', 'ts', true),
-                new LanguageType('TypeScript React', 'tsx', true),
-                new LanguageType('Vue', 'vue', true),
-                new LanguageType('XML', 'xml', false),
-                new LanguageType('XSL', 'xsl', false),
-                new LanguageType('YAML', 'yaml', false)
-            ];
+    constructor() {
+        super();
 
-            this.filteredLanguageTypes = this.LanguageTypes;
-        }
-        
-        public chooseExt($event: Event, selectedLanguageType: LanguageType): void {
-            console.log(selectedLanguageType);
-//            this.setSelectedClass($event);
-            selectedLanguageType.IsSelected = true;
-            
-            selectedLanguageType.setExt(selectedLanguageType);
-        }
-        
-        @Emit('clearSearch')
-        public emitClear(): void {}
+        this.searchStore = getModule(SearchStore);
 
-        @Watch('searchTerm')
-        public filterList(): void {
-            this.filteredLanguageTypes = this.LanguageTypes
-                .filter((language: LanguageType) => {
-                    language.IsSelected = false;
-                    return language.LanguageName.toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
-                });
-        
-            if (this.filteredLanguageTypes && this.filteredLanguageTypes.length && this.searchTerm) {
-                this.filteredLanguageTypes[0].IsSelected = true;
-            }
-        
-                
-//            const findFirstMatchedElement = this.$el.querySelector(`.svg-${}`);
-//            this.firstListElem = (findFirstMatchedElement && findFirstMatchedElement.parentElement) as HTMLLIElement;
-//            
-//            this.selectedElem = this.$el.querySelector('.selected');
-//            
-//            if(!!this.searchTerm) {
-//                this.firstListElem && this.firstListElem.classList.add('selected');
-//            } else {
-//                this.selectedElem && this.selectedElem.classList.remove('selected');
-//            }
-        }
+        this.languageTypes = [
+            new LanguageType('ANTLRv3', 'g', true),
+            new LanguageType('ANTLRv4', 'g4', true),
+            new LanguageType('Assembler', 'asm', false),
+            new LanguageType('Batch', 'bat', false),
+            new LanguageType('C', 'c', false),
+            new LanguageType('C#', 'cs', true),
+            new LanguageType('C++', 'cpp', false),
+            new LanguageType('CSS', 'css', false),
+            new LanguageType('Clojure', 'clj', true),
+            new LanguageType('CoffeeScript', 'coffee', true),
+            new LanguageType('Dockerfile', '', false),
+            new LanguageType('Freemarker', 'ftl', true),
+            new LanguageType('Galen', 'gspec', true),
+            new LanguageType('GLSL', 'glsl', true),
+            new LanguageType('Go', 'go', true),
+            new LanguageType('Groovy', 'groovy', true),
+            new LanguageType('HAML', 'haml', true),
+            new LanguageType('Handlebars', 'hbs', true),
+            new LanguageType('HTML', 'html', false),
+            new LanguageType('Ini', 'ini', false),
+            new LanguageType('Jade/Pug', 'pug', false),
+            new LanguageType('Java', 'java', false),
+            new LanguageType('JavaScript', 'js', false),
+            new LanguageType('JavaScript React', 'jsx', false),
+            new LanguageType('JSP', 'jsp', false),
+            new LanguageType('JSON', 'json', false),
+            new LanguageType('Kotlin', 'kt', true),
+            new LanguageType('Less', 'less', false),
+            new LanguageType('LISP', 'lisp', true),
+            new LanguageType('Lua', 'lua', true),
+            new LanguageType('Makefile', '', false),
+            new LanguageType('Markdown', 'md', true),
+            new LanguageType('NetBeans Mind Map', 'mmd', true),
+            new LanguageType('Perl', 'pl', true),
+            new LanguageType('PHP', 'php', false),
+            new LanguageType('Plain Text', 'txt', false),
+            new LanguageType('PLSQL', 'plsql', true),
+            new LanguageType('Puppet', 'pp', true),
+            new LanguageType('Python', 'py', true),
+            new LanguageType('R', 'r', true),
+            new LanguageType('Ruby', 'rb', true),
+            new LanguageType('Rust', 'rs', true),
+            new LanguageType('Sass', 'sass', false),
+            new LanguageType('Scala', 'scala', true),
+            new LanguageType('Scss', 'scss', false),
+            new LanguageType('Smarty', 'tpl', false),
+            new LanguageType('SQL', 'sql', false),
+            new LanguageType('Shell Script', 'sh', true),
+            new LanguageType('Tex', 'tex', true),
+            new LanguageType('Twig', 'twig', false),
+            new LanguageType('TypeScript', 'ts', true),
+            new LanguageType('TypeScript React', 'tsx', true),
+            new LanguageType('Vue', 'vue', true),
+            new LanguageType('XML', 'xml', false),
+            new LanguageType('XSL', 'xsl', false),
+            new LanguageType('YAML', 'yaml', false),
+        ];
 
-        public mounted(): void {
-            this.prepareElements();
+        this.filteredLanguageTypes = this.languageTypes;
+    }
 
-            this.handleItemSelectionWithArrowKeys();
+    public chooseExt($event: Event, selectedLanguageType: LanguageType): void {
+        console.log('selectedLanguageType: ', selectedLanguageType);
+        //            this.setSelectedClass($event);
+        // selectedLanguageType.IsSelected = true;
+
+        this.searchStore.updateSelectedElementAction(selectedLanguageType);
+
+        selectedLanguageType.setExt(selectedLanguageType);
+    }
+
+    @Watch('searchStore.SearchState.SearchTerm')
+    public filterList(): void {
+        this.filteredLanguageTypes = this.languageTypes.filter(
+            (language: ILanguageType) => {
+                language.IsSelected = false;
+
+                return (
+                    language.LanguageName.toLowerCase().indexOf(
+                        this.searchStore.SearchState.SearchTerm.toLowerCase(),
+                    ) > -1
+                );
+            },
+        );
+
+        if (
+            this.filteredLanguageTypes.length > 0 &&
+            this.searchStore.SearchState.SearchTerm
+        ) {
+            this.filteredLanguageTypes[0].IsSelected = true;
+            this.searchStore.SearchState.SelectedElem = this.filteredLanguageTypes[0];
+        } else {
+            this.searchStore.SearchState.SelectedElem = null;
         }
 
-//        get computedSearchTerm() {
-//            return this.searchTerm;
-//        }
+        //            const findFirstMatchedElement = this.$el.querySelector(`.svg-${}`);
+        //            this.firstListElem = (findFirstMatchedElement && findFirstMatchedElement.parentElement) as HTMLLIElement;
+        //
+        //            this.selectedElem = this.$el.querySelector('.selected');
+        //
+        //            if(!!this.searchTerm) {
+        //                this.firstListElem && this.firstListElem.classList.add('selected');
+        //            } else {
+        //                this.selectedElem && this.selectedElem.classList.remove('selected');
+        //            }
+    }
 
-//        set computedSearchTerm(value) {
-//            this.searchTerm = value;
-//        }
-        
-        private prepareElements(): void {
-            this.firstListElem = this.$el.firstChild as HTMLLIElement;
-            this.lastListElem = this.$el.lastChild as HTMLLIElement;
-        }
-//        
-        private moveUp(): void {
-            if(this.selectedElem) {
-                if(!this.previousListElem) {
-                    this.selectedElem.classList.remove('selected');
+    public mounted(): void {
+        this.prepareElements();
 
-                    this.selectedElem = this.lastListElem;
+        this.handleItemSelectionWithArrowKeys();
+    }
 
-                    this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');
-                } else {
-                    this.selectedElem.classList.remove('selected');
+    //        get computedSearchTerm() {
+    //            return this.searchTerm;
+    //        }
 
-                    this.selectedElem = this.previousListElem;
+    //        set computedSearchTerm(value) {
+    //            this.searchTerm = value;
+    //        }
 
-                    this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');
-                }
-            } else {
+    private prepareElements(): void {
+        this.firstListElem = this.$el.firstChild as HTMLLIElement;
+        this.lastListElem = this.$el.lastChild as HTMLLIElement;
+    }
+    //
+    private moveUp(): void {
+        if (this.selectedElem) {
+            if (!this.previousListElem) {
+                this.selectedElem.classList.remove('selected');
+
                 this.selectedElem = this.lastListElem;
-                
-                if (this.selectedElem) {
-                    this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');
-                }
-            }
-        }
 
-        private moveDown(): void {
-            this.prepareElements();
-            
-            if(this.selectedElem) {
-                if(!this.nextListElem) {
-                    this.selectedElem.classList.remove('selected');
-
-                    this.selectedElem = this.firstListElem;
-
-                    this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');
-                } else {
-                    this.selectedElem.classList.remove('selected');
-                    
-                    this.selectedElem = this.nextListElem;
-
-                    this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');
-                }
+                // this.selectedElem.focus();
+                // this.selectedElem.classList.add('selected');
             } else {
-                this.selectedElem = this.firstListElem;
-                
-                if (this.selectedElem) {
-                    this.selectedElem.focus();
-                    this.selectedElem.classList.add('selected');
-                }
+                this.selectedElem.classList.remove('selected');
 
+                this.selectedElem = this.previousListElem;
+
+                this.selectedElem.focus();
+                this.selectedElem.classList.add('selected');
+            }
+        } else {
+            this.selectedElem = this.lastListElem;
+
+            if (this.selectedElem) {
+                this.selectedElem.focus();
+                this.selectedElem.classList.add('selected');
             }
         }
-        
-//        private setSelectedClass($event: Event): void {
-//            this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
-//
-//            if(this.selectedElem) {
-//                this.selectedElem.classList.toggle('selected');
-//            }
-//
-//            this.selectedElem = $event.target as HTMLLIElement;
-//            this.selectedElem.classList.toggle('selected');
-//        }
-        
-        private handleItemSelectionWithArrowKeys(): void {
-            document.querySelector('body').addEventListener('keydown', (evt: KeyboardEvent) => {
-                this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
-                
+    }
+
+    private moveDown(): void {
+        this.prepareElements();
+
+        if (this.selectedElem) {
+            if (!this.nextListElem) {
+                this.selectedElem.classList.remove('selected');
+
+                this.selectedElem = this.firstListElem;
+
+                this.selectedElem!.focus();
+                this.selectedElem!.classList.add('selected');
+            } else {
+                this.selectedElem.classList.remove('selected');
+
+                this.selectedElem = this.nextListElem;
+
+                this.selectedElem.focus();
+                this.selectedElem.classList.add('selected');
+            }
+        } else {
+            this.selectedElem = this.firstListElem;
+
+            if (this.selectedElem) {
+                this.selectedElem.focus();
+                this.selectedElem.classList.add('selected');
+            }
+        }
+    }
+
+    //        private setSelectedClass($event: Event): void {
+    //            this.selectedElem = this.$el.querySelector('.selected') as HTMLLIElement;
+    //
+    //            if(this.selectedElem) {
+    //                this.selectedElem.classList.toggle('selected');
+    //            }
+    //
+    //            this.selectedElem = $event.target as HTMLLIElement;
+    //            this.selectedElem.classList.toggle('selected');
+    //        }
+
+    private handleItemSelectionWithArrowKeys(): void {
+        const body = document.querySelector('body');
+
+        if (body) {
+            body.addEventListener('keydown', (evt: KeyboardEvent) => {
+                this.selectedElem = this.$el.querySelector(
+                    '.selected',
+                ) as HTMLLIElement;
+
                 if (this.selectedElem) {
-                    this.previousListElem = this.selectedElem.previousElementSibling as HTMLLIElement;
-                    this.nextListElem = this.selectedElem.nextElementSibling as HTMLLIElement;
+                    this.previousListElem = this.selectedElem
+                        .previousElementSibling as HTMLLIElement;
+                    this.nextListElem = this.selectedElem
+                        .nextElementSibling as HTMLLIElement;
                 }
-                
-                if(evt.keyCode === KeyCode.Up) {
+
+                if (evt.keyCode === KeyCode.Up) {
                     evt.preventDefault();
 
                     this.moveUp();
-                } else if(evt.keyCode === KeyCode.Down) {
+                } else if (evt.keyCode === KeyCode.Down) {
                     evt.preventDefault();
 
                     this.moveDown();
                 }
-                
-                if(evt.keyCode === KeyCode.Enter) {
-                    if(this.selectedElem) {
+
+                if (evt.keyCode === KeyCode.Enter) {
+                    if (this.selectedElem) {
                         this.getDataFromSelectedElem(evt);
                     }
                 }
             });
         }
-        
-        private getDataFromSelectedElem(evt: KeyboardEvent): void {
-            if(this.selectedElem) {
-                this.emitClear();
-            }
-            
-            let languageExt: string = this.selectedElem && this.selectedElem.querySelector('.ext').textContent.replace('(.', '').replace(')', ''),
+    }
+
+    private getDataFromSelectedElem(evt: KeyboardEvent): void {
+        // if(this.selectedElem) {
+        //     this.emitClear();
+        // }
+
+        const ext: HTMLDivElement | null =
+            this.selectedElem && this.selectedElem.querySelector('.ext');
+
+        if (ext) {
+            const languageExt: string = ext
+                    .textContent!.replace('(.', '')
+                    .replace(')', ''),
                 languageType: LanguageType = new LanguageType('', languageExt);
 
             this.chooseExt(evt, languageType);
         }
     }
+}
 </script>
 
 <style lang="scss">
-    #languageTypes {
-        list-style: none;
-        margin: 0;
-        color: darkslategrey;
-        padding: 0;
-        padding-bottom: 5px;
-        overflow-y: scroll;
-        max-height: 385px;
+#languageTypes {
+    list-style: none;
+    margin: 0;
+    color: darkslategrey;
+    padding: 0;
+    overflow-y: scroll;
+    max-height: 385px;
 
-        li {
-            padding: 2px 0 2px 12px;
-            transition: background-color 100ms ease, color 100ms ease;
-            display: flex;
-            align-items: center;
-            
-            div {
-                pointer-events: none;
-            }
+    li {
+        padding: 2px 0 2px 12px;
+        transition: background-color 100ms ease, color 100ms ease;
+        display: flex;
+        align-items: center;
 
-            .icon {
-                width: 20px;
-                height: 20px;
-                margin-right: 8px;
-            }
+        div {
+            pointer-events: none;
+        }
 
-            .small {
-                color: grey;
-                font-size: 80%;
-                margin-left: 4px;
-            }
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
 
-            &:hover {
-                background-color: #f5f5f5;
-                cursor: pointer;
-            }
+        .small {
+            color: grey;
+            font-size: 80%;
+            margin-left: 4px;
+        }
 
-            &.selected {
-                background-color: #2665e5;
-                color: #fff;
+        &:hover {
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
 
-                .file-ext {
-                    color: #ccc;
-                }
+        &.selected {
+            background-color: #2665e5;
+            color: #fff;
+
+            .file-ext {
+                color: #ccc;
             }
         }
     }
+}
 </style>

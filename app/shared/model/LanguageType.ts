@@ -3,7 +3,7 @@
  * @author Chrl
  */
  
-export interface ILanguageType {
+export default interface ILanguageType {
      Icon: string;
      LanguageName: string;
      FileExt: string;
@@ -18,11 +18,12 @@ export class LanguageType implements ILanguageType {
     private isPluginRequired: boolean;
     private isSelected: boolean;
 
-    constructor(languageName: string, fileExt: string, isPluginRequired: boolean = false) {
+    constructor(languageName: string, fileExt: string, isPluginRequired: boolean = false, isSelected = false) {
         this.icon = fileExt || languageName;
         this.languageName = languageName;
         this.fileExt = fileExt || languageName;
         this.isPluginRequired = isPluginRequired;
+        this.isSelected = isSelected;
     }
 
     public get Icon() {
