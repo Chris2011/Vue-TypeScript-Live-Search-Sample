@@ -6,7 +6,7 @@
             v-for="(languageType, index) in filteredLanguageTypes"
             :key="languageType.LanguageName"
             :class="{ selected: languageType.IsSelected }"
-            :focus="languageType.HasFocus"
+            v-focus="languageType.HasFocus"
         >
             <div v-once class="icon" :class="'svg-' + languageType.Icon"></div>
             <div v-once>{{ languageType.LanguageName }}</div>
@@ -28,8 +28,21 @@ import { getModule } from 'vuex-module-decorators';
 import ILanguageType, { LanguageType } from '../shared/model/LanguageType';
 import { KeyCode } from '../shared/model/KeyCode';
 import SearchStore from '../shared/store/SearchStore';
+import { DirectiveOptions } from 'vue/types/options';
 
-@Component
+@Component({
+    directives: {
+        focus: {
+            update(el: HTMLElement, node): void {
+                if (node.value) {
+                    Vue.nextTick(function() {
+                        el.focus();
+                    });
+                }
+            },
+        } as DirectiveOptions,
+    },
+})
 export default class LanguageTypeListComponent extends Vue {
     private firstListElem: ILanguageType | null;
     private lastListElem: ILanguageType | null;
@@ -154,7 +167,9 @@ export default class LanguageTypeListComponent extends Vue {
 
     private prepareElements(): void {
         this.firstListElem = this.filteredLanguageTypes[0];
-        this.lastListElem = this.filteredLanguageTypes[this.filteredLanguageTypes.length - 1];
+        this.lastListElem = this.filteredLanguageTypes[
+            this.filteredLanguageTypes.length - 1
+        ];
     }
 
     private moveUp(): void {
@@ -183,22 +198,22 @@ export default class LanguageTypeListComponent extends Vue {
         }
     }
 
+    private getElement(index: number): ILanguageType {
+        return this.filteredLanguageTypes[
+            this.filteredLanguageTypes.findIndex(
+                (language: ILanguageType) => language.IsSelected,
+            ) + index
+        ];
+    }
+
     private handleItemSelectionWithArrowKeys(): void {
         const body = document.querySelector('body');
 
         if (body) {
             body.addEventListener('keyup', (evt: KeyboardEvent) => {
                 if (this.searchStore.SearchState.SelectedElem) {
-                    this.prevElem = this.filteredLanguageTypes[
-                        this.filteredLanguageTypes.findIndex(
-                            (language: ILanguageType) => language.IsSelected,
-                        ) - 1
-                    ];
-                    this.nextElem = this.filteredLanguageTypes[
-                        this.filteredLanguageTypes.findIndex(
-                            (language: ILanguageType) => language.IsSelected,
-                        ) + 1
-                    ];
+                    this.prevElem = this.getElement(-1);
+                    this.nextElem = this.getElement(+1);
                 }
 
                 if (evt.keyCode === KeyCode.Up) {
