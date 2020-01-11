@@ -1,5 +1,5 @@
 {
-    "trailingComma": "all",
+    "trailingComma": "es5",
     "tabWidth": 4,
     "semi": true,
     "singleQuote": true,
@@ -7,12 +7,11 @@
     "arrowParens": "always",
     "jsxBracketSameLine": true,
     "htmlWhitespaceSensitivity": "ignore",
-    "overrides": [
-        {
-            "files": "*.vue",
-            "options": {
-                "parser": "vue"
-            }
+    "printWidth": 150,
+    "overrides": [{
+        "files": "*.vue",
+        "options": {
+            "parser": "vue"
         }
-    ]
+    }]
 }
