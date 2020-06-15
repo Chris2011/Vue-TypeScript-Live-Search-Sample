@@ -51,7 +51,7 @@
         "vue-template-compiler": "^2.6.10",
         "vuex-module-decorators": "^0.9.8",
         "webpack": "^4.29.6",
-        "webpack-bundle-analyzer": "^2.13.1",
+        "webpack-bundle-analyzer": "^3.3.2",
         "webpack-cli": "^3.3.0",
         "webpack-dev-server": "^3.2.1"
     },
