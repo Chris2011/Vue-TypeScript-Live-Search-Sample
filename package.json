@@ -34,7 +34,7 @@
         "cssnano": "^4.1.10",
         "jimp": "^0.4.0",
         "mocha": "^5.2.0",
-        "node-sass": "^4.9.0",
+        "node-sass": "^7.0.0",
         "node-sprite-generator": "^0.10.2",
         "postcss-loader": "^3.0.0",
         "protractor": "^5.3.2",
